@@ -1,0 +1,1 @@
+[{"uid":"c1a7f24c64d249dc","name":"test","time":{"start":1778646527753,"stop":1778646531819,"duration":4066},"status":"passed","severity":"normal"},{"uid":"a7afbb0d01134bd5","name":"Client App login with custom fixture","time":{"start":1778644261326,"stop":1778644264832,"duration":3506},"status":"failed","severity":"normal"}]

@@ -1,0 +1,72 @@
+const { test, expect } = require('@playwright/test');
+const { TIMEOUT } = require('node:dns');
+
+async function loginAndGoToBooking(page) {
+    await page.goto('https://eventhub.rahulshettyacademy.com/login');
+    const email = page.getByPlaceholder('you@email.com');
+    await email.click();
+    await email.fill('test123456@gmail.com');
+    const password = page.getByLabel('Password');
+    await password.click();
+    await password.fill('Test123456@');
+    const signin = page.locator('#login-btn');
+    await signin.click();
+    await expect(page.getByRole('link', { name: 'Browse Events →' })).toBeVisible();
+}
+
+test('2nd assignment', async ({ page }) => {
+    await loginAndGoToBooking(page);
+    await page.getByTestId('nav-events').click();
+    await page.getByTestId('event-card').first().getByTestId('book-now-btn').click();
+    await page.getByRole('textbox', { name: 'Full Name*' }).click();
+    await page.getByRole('textbox', { name: 'Full Name*' }).fill('test');
+    await page.getByTestId('customer-email').click();
+    await page.getByTestId('customer-email').fill('test123456@gmail.com');
+    await page.getByRole('textbox', { name: 'Phone Number*' }).click();
+    await page.getByRole('textbox', { name: 'Phone Number*' }).fill('1234567890');
+    await page.locator('.confirm-booking-btn').click();
+    console.log('Test1 - first booking with 1 ticket \n');
+    await page.getByRole('button', { name: 'View My Bookings' }).click();
+    await expect(page).toHaveURL('https://eventhub.rahulshettyacademy.com/bookings');
+    await page.getByRole('button', { name: 'View Details' }).first().click();
+    await expect(page.getByRole('heading', { name: 'Event Details' })).toBeVisible();
+    const bookingref = await page.locator('.font-mono').first().textContent();
+    const eventname = await page.locator('h1.text-gray-900').first().textContent();
+    const bookingref_F = bookingref.trim().charAt(0);
+    const eventname_F = eventname.trim().charAt(0);
+    expect(bookingref_F).toBe(eventname_F);
+    await page.getByTestId('check-refund-btn').click();
+    await expect(page.locator('#refund-spinner')).toBeVisible({ timeout: 6000 });
+    await expect(page.locator('#refund-result')).toBeVisible();
+    await expect(page.locator('#refund-result')).toContainText('Eligible for refund');
+    console.log('test1- Eligible for refund\n');
+    await expect(page.locator('#refund-result').toContainText('Single-ticket bookings qualify for a full refund.'));
+    console.log('Single-ticket bookings qualify for a full refund.\n');
+    await page.getByTestId('nav-events').click();
+    await page.getByTestId('event-card').first().getByTestId('book-now-btn').click();
+    await page.getByRole('button', { name: '+' }).click();
+    await page.getByRole('button', { name: '+' }).click();
+    await page.getByRole('textbox', { name: 'Full Name*' }).click();
+    await page.getByRole('textbox', { name: 'Full Name*' }).fill('test');
+    await page.getByTestId('customer-email').click();
+    await page.getByTestId('customer-email').fill('test123456@gmail.com');
+    await page.getByRole('textbox', { name: 'Phone Number*' }).click();
+    await page.getByRole('textbox', { name: 'Phone Number*' }).fill('1234567890');
+    await page.locator('.confirm-booking-btn').click();
+    console.log('test2 started with3 tickets\n');
+    await page.getByRole('button', { name: 'View My Bookings' }).click();
+    await expect(page).toHaveURL('https://eventhub.rahulshettyacademy.com/bookings');
+    await page.getByRole('button', { name: 'View Details' }).first().click();
+    await expect(page.getByRole('heading', { name: 'Event Details' })).toBeVisible();
+    const bbookingref = await page.locator('.font-mono').first().textContent();
+    const eeventname = await page.locator('h1.text-gray-900').first().textContent();
+    const bbookingref_F = bbookingref.trim().charAt(0);
+    const eeventname_F = eeventname.trim().charAt(0);
+    expect(bbookingref_F).toBe(eeventname_F);
+    await page.getByTestId('check-refund-btn').click();
+    await expect(page.locator('#refund-spinner')).toBeVisible({ timeout: 6000 });
+    await expect(page.locator('#refund-result')).toBeVisible();
+    await expect(page.locator('#refund-result')).toContainText('Not eligible for refund');
+    console.log('test1- Not Eligible for refund\n');
+
+});
